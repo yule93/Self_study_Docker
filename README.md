@@ -37,4 +37,22 @@ docker rmi [이미지 ID 또는 이미지명: TAG명]
 
 ## 3. Dockerization Vue js
 [공식 문서 참고](https://kr.vuejs.org/v2/cookbook/dockerize-vuejs-app.html)
-
+1) Dockerfile 만들기
+VueJS의 루트 주소에 Dockerfile 이라는 이름의 파일 확장명이 없는 파일을 만들어야 한다. 내용은 아래와 같이 만들며, cmd에서 파일을 생성하는 명령어는 ```copy con Dockerfile```로 만들면 된다.
+```text
+FROM node:lts-alpine
+# install simple http server for serving static content
+RUN npm install -g http-server
+# make the 'app' folder the current working directory
+WORKDIR /app
+# copy both 'package.json' and 'package-lock.json' (if available)
+COPY package*.json ./
+# install project dependencies leaving out dev dependencies
+RUN npm install --production
+# copy project files and folders to the current working directory (i.e. 'app' folder)
+COPY . .
+# build app for production with minification
+RUN npm run build
+EXPOSE 8080
+CMD [ "http-server", "dist" ]
+```
